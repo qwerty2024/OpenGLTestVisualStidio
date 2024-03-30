@@ -98,11 +98,15 @@ int main(void)
 
     glUseProgram(shader);
 
+    glUniform2f(glGetUniformLocation(shader, "resolution"), 1280, 720);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, GL_TRUE);
+
+        glUniform1f(glGetUniformLocation(shader, "time"), glfwGetTime());
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
