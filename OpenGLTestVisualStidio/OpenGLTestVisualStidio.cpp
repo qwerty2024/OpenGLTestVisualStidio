@@ -1,6 +1,48 @@
 ﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
+#include <filesystem>
+
+
+std::string readFile(std::filesystem::path path)
+{
+    std::ifstream in(path, std::ios::binary);
+    const auto sz = std::filesystem::file_size(path);
+    std::string result(sz, '\0');
+    in.read(result.data(), sz);
+
+    return result;
+}
+
+GLuint compileShader(unsigned int shaderType, std::string &src)
+{
+    GLuint  id = glCreateShader(shaderType);
+    const char* raw = src.c_str();
+    glShaderSource(id, 1, &raw, nullptr);
+    glCompileShader(id);
+
+    return id;
+}
+
+unsigned int createShader(std::string &vertex, std::string &fragment)
+{
+    GLuint  vs = compileShader(GL_VERTEX_SHADER, vertex);
+    GLuint  fs = compileShader(GL_FRAGMENT_SHADER, fragment);
+
+    GLuint program = glCreateProgram();
+
+    glAttachShader(program, vs);
+    glAttachShader(program, fs);
+    glLinkProgram(program);
+    glUseProgram(program);
+    glValidateProgram(program);
+
+    glDeleteShader(vs);
+    glDeleteShader(fs);
+
+    return program;
+}
 
 
 int main(void)
@@ -12,7 +54,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr); // Windowed
     if (!window)
     {
         glfwTerminate();
@@ -29,23 +71,51 @@ int main(void)
         return -1;
     }
 
+    float vertecies[] =
+    {
+        -1.0, -1.0,
+        1.0, -1.0,
+        1.0, 1.0,
+
+        1.0, 1.0,
+        -1.0, 1.0,
+        -1.0, -1.0,
+    };
+
+    std::string vertex = readFile("Shaders\\v.shader");
+    std::string fragment = readFile("Shaders\\f.shader");
+    
+
+    GLuint VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), vertecies, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+    
+    glEnableVertexAttribArray(0);
+
+    unsigned int shader = createShader(vertex, fragment);
+
+    glUseProgram(shader);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        glBegin(GL_TRIANGLES);
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, GL_TRUE);
 
-        glVertex2d(0.0, 1.0);
-        glVertex2d(1.0, -1.0);
-        glVertex2d(-1.0, -1.0);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        glEnd();
-        /* Swap front and back buffers */
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
         glfwSwapBuffers(window);
-
-        /* Poll for and process events */
         glfwPollEvents();
     }
 
+
+    glDeleteProgram(shader);
     glfwTerminate();
     return 0;
 }
