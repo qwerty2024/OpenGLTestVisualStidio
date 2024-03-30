@@ -18,5 +18,12 @@
     <ClCompile Include="OpenGLTestVisualStidio.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\f.shader" />
+    <None Include="Shaders\v.shader" />
   </ItemGroup>
 </Project>

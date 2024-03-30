@@ -138,7 +138,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="glad.c" />
     <ClCompile Include="OpenGLTestVisualStidio.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\f.shader" />
+    <None Include="Shaders\v.shader" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
