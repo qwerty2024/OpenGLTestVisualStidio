@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include <glfw3.h>
-
+#include <GLFW\glfw3.h>
+//#include <glad/glad.h>
 
 
 int main(void)
@@ -25,8 +25,16 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        glBegin(GL_TRIANGLES);
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glVertex2d(0.0, 1.0);
+        glVertex2d(1.0, -1.0);
+        glVertex2d(-1.0, -1.0);
+
+        glEnd();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
